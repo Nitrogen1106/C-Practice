@@ -1,0 +1,8 @@
+{
+    "Lingma.cloudModelAutoTriggerGenerateLength": "disable",
+    "files.associations": {
+        "string": "cpp",
+        "ostream": "cpp",
+        "format": "cpp"
+    }
+}
