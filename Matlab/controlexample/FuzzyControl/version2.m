@@ -56,14 +56,14 @@ for t = 1:150
     MySpeed = output(2);
 
     % 执行变道或保持车道
-    if LaneChange >= 0.5 && LatDis > TrackDis
+    if LaneChange >= 0.5
         % 变道操作，确保变道平滑
-        if MyPos(2) < 45 && LatDis > MyPos(2) % 向右变道
-            MyPos(2) = MyPos(2) + 10;
-            disp('变道中');
-        elseif MyPos(2) > 15 && LatDis < MyPos(2) % 向左变道
+        if  LatDis(1) > TrackDis && Dir == -1 % 向左变道
             MyPos(2) = MyPos(2) - 10;
-            disp('变道中');
+            disp('变道成功，左侧绕行前方车辆');
+        elseif LatDis(2) > TrackDis && Dir == 1 % 向右变道
+            MyPos(2) = MyPos(2) + 10;
+            disp('变道成功，右侧绕行车辆');
         end
     end
     disp(['速度：',num2str(MySpeed)]);
@@ -81,14 +81,16 @@ end
 
 hold off;
 
-% 判断前方最近车辆距离
+
+% 判断前方最近车辆距离（基于探测距离 SensorDis）
 function [FrontDetected, FrontDis] = GetFroDis(MyPos, CarPos, CarNum, SensorDis)
-    FrontDis = inf;
-    FrontDetected = false;
+    FrontDis = inf; % 初始化前向距离为无穷大
+    FrontDetected = false; % 初始化前方检测状态为未检测到
+
     for i = 1:CarNum
         if CarPos(i).y == MyPos(2) && CarPos(i).x > MyPos(1)
-            Dis = CarPos(i).x - MyPos(1);
-            if Dis < FrontDis && Dis <= SensorDis
+            Dis = norm([CarPos(i).x - MyPos(1), CarPos(i).y - MyPos(2)]);
+            if Dis < FrontDis && Dis <= SensorDis  % 只在探测范围内更新距离
                 FrontDis = Dis;
                 FrontDetected = true;
             end
@@ -96,24 +98,45 @@ function [FrontDetected, FrontDis] = GetFroDis(MyPos, CarPos, CarNum, SensorDis)
     end
 end
 
-% 判断侧向最近车辆距离
-function [LatDetected, LatDis] = GetLatDis(MyPos, CarPos, CarNum, lane_centers, SensorDis)
-    LatDis = inf;
+% 判断侧向最近车辆距离（基于探测距离 SensorDis）
+function [LatDetected, LatDis,Dir] = GetLatDis(MyPos, CarPos, CarNum, lane_centers, SensorDis)
+    LatDis = [inf,inf];
     LatDetected = false;
+    Dir=0;
+    %计算当前车道索引
     [~, current_lane] = min(abs(MyPos(2) - lane_centers));
-    adjacent_lanes = [];
+    adjacent_lanes = [0 0];
+
     if current_lane > 1
-        adjacent_lanes(end+1) = lane_centers(current_lane - 1);
+        adjacent_lanes(1) =lane_centers(current_lane - 1);
     end
     if current_lane < length(lane_centers)
-        adjacent_lanes(end+1) = lane_centers(current_lane + 1);
+        adjacent_lanes(2)=lane_centers(current_lane + 1);
     end
+
     for i = 1:CarNum
         if ismember(CarPos(i).y, adjacent_lanes) && CarPos(i).x > MyPos(1)
-            Dis = abs(CarPos(i).y - MyPos(2));
-            if Dis < LatDis && Dis <= SensorDis
-                LatDis = Dis;
+            Dis = norm([CarPos(i).x - MyPos(1), CarPos(i).y - MyPos(2)]);
+            if Dis < min(LatDis) && Dis <= SensorDis  % 只在探测范围内更新距离
                 LatDetected = true;
+                %获取车道索引
+                [~, lane_index] = min(abs(CarPos(i).y - lane_centers));
+                %左侧距离赋值
+                if lane_index>current_lane 
+                    LatDis(1)=Dis;
+                end
+                %右侧距离赋值
+                if lane_index<current_lane  
+                    LatDis(2)=Dis;
+                end
+                %向左变道
+                if LatDis(1)>LatDis(2) 
+                    Dir = 1;
+                end
+
+                 if LatDis(1)<LatDis(2) 
+                    Dir = -1;
+                end
             end
         end
     end

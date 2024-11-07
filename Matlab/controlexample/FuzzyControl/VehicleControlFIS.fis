@@ -2,7 +2,7 @@
 Name='VehicleControlFIS'
 Type='mamdani'
 Version=2.0
-NumInputs=2
+NumInputs=3
 NumOutputs=2
 NumRules=9
 AndMethod='min'
@@ -13,42 +13,51 @@ DefuzzMethod='centroid'
 
 [Input1]
 Name='FrontDis'
-Range=[0 50]
+Range=[0 100]
 NumMFs=3
-MF1='Close':'trapmf',[0 0 5 12]
-MF2='Moderate':'trapmf',[12 18 24 30]
-MF3='Far':'trapmf',[30 35 40 50]
+MF1='Close':'trapmf',[0 10 20 35]
+MF2='Moderate':'trapmf',[35 45 55 65]
+MF3='Far':'trapmf',[65 75 85 100]
 
 [Input2]
-Name='LatDis'
-Range=[0 50]
+Name='LatDisLeft'
+Range=[0 100]
 NumMFs=3
-MF1='Close':'trapmf',[0 4 8 12]
-MF2='Moderate':'trapmf',[12 18 24 30]
-MF3='Far':'trapmf',[30 35 40 50]
+MF1='Close':'trapmf',[0 10 20 35]
+MF2='Moderate':'trapmf',[35 45 55 65]
+MF3='Far':'trapmf',[65 75 85 100]
+
+[Input3]
+Name='LatDisRight'
+Range=[0 100]
+NumMFs=3
+MF1='Close':'trapmf',[0 10 20 35]
+MF2='Moderate':'trapmf',[35 45 55 65]
+MF3='Far':'trapmf',[65 75 85 100]
 
 [Output1]
 Name='LaneChange'
-Range=[0 1]
-NumMFs=2
-MF1='Stay':'trimf',[0 0 0.5]
-MF2='Change':'trimf',[0.5 1 1]
+Range=[-1 1]
+NumMFs=3
+MF1='Stay':'trimf',[-0.5 0 0.5]
+MF2='Left':'trimf',[-1 -1 -0.5]
+MF3='Right':'trimf',[0.5 1 1]
 
 [Output2]
 Name='MySpeed'
-Range=[1 3]
+Range=[0.5 3]
 NumMFs=3
-MF1='Slow':'trimf',[1 1.2 2]
+MF1='Slow':'trimf',[0.5 1.2 2]
 MF2='Moderate':'trimf',[2 2.25 2.5]
 MF3='Fast':'trimf',[2.5 2.75 3]
 
 [Rules]
-1 1, 1 1 (1) : 1
-1 2, 2 2 (1) : 1
-1 3, 2 3 (1) : 1
-2 1, 1 2 (1) : 1
-2 2, 1 2 (1) : 1
-2 3, 2 3 (1) : 1
-3 1, 1 3 (1) : 1
-3 2, 1 3 (1) : 1
-3 3, 1 3 (1) : 1
+3 0 0, 0 3 (1) : 1
+2 1 1, 0 2 (1) : 1
+2 3 1, -1 2 (1) : 1
+2 1 3, 1 2 (1) : 1
+2 3 3, -1 2 (1) : 1
+1 3 1, -1 1 (1) : 1
+1 1 3, 1 1 (1) : 1
+1 3 3, -1 1 (1) : 1
+1 1 1, 0 1 (1) : 1
