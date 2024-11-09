@@ -1,3 +1,0 @@
-fismat=readfis('VehicleControlFis.fis')
-
-

@@ -40,7 +40,7 @@ end
 
 %-----------------------AUV本体参数------------------------------
 % 探测距离
-SensorDis = 50;
+SensorDis = 100;
 
 % 跟踪距离
 TrackDis = 20;
@@ -172,18 +172,16 @@ function [MySpeed, MyPos] = AutoOper(CarPos, FrontDis, LatDis, TrackDis, MySpeed
     MinSpeed = 0.5;
 
     % 判断是否进入跟车状态
-    if FrontDis > TrackDis
+    if FrontDis > TrackDis+2
         % 如果前方距离大于跟踪距离，则加速
         MySpeed = min(MySpeed + MyAcc, MaxSpeed);
         disp(['加速中，当前速度: ', num2str(MySpeed)]);
-    else
+    elseif FrontDis <= TrackDis-1
         % 如果前方距离小于等于跟踪距离，尝试变道
         disp('尝试变道...');
         
-
         if LatDis(1) == inf && LatDis(2) == inf
         MyPos(2) = MyPos(2) +Dir*10;
-
         end
 
         % 判断是否可以绕行前方车辆
