@@ -17,7 +17,7 @@ front_text = text(5, 57, '', 'FontSize', 10, 'Color', 'blue', 'FontWeight', 'bol
 lat_text = text(5, 52, '', 'FontSize', 10, 'Color', 'blue', 'FontWeight', 'bold');
 speed_text = text(140, 55, '', 'FontSize', 10, 'Color', 'blue', 'FontWeight', 'bold');
 
-
+v_r=zeros(1,100);
 %---------------------------------汽车生成------------------------------
 CarNum = 6;
 % 定义车道中心位置
@@ -46,8 +46,8 @@ SensorDis = 100;
 TrackDis = 20;
 
 % 初始速度和加速度
-MySpeed = 0.5;
-MyAcc = 0.3;
+MySpeed = 1.5;
+MyAcc = 0.1;
 
 % 当前位置
 MyPos = [0, 25];
@@ -55,7 +55,7 @@ AUV = rectangle('Position', [MyPos(1)-2, MyPos(2)-1, 4, 2], 'FaceColor', 'g');
 
 %----------------------运行过程----------------------------------------
 % 动态更新车辆位置，模拟运动
-for t = 1:150
+for t = 1:100
 
     % 更新车辆位置
     for i = 1:CarNum
@@ -77,6 +77,8 @@ for t = 1:150
 
     % 更新 AUV 位置
     AUV.Position = [MyPos(1)-2, MyPos(2)-1, 4, 2];
+
+    v_r(t)=MySpeed;
     
     set(front_text, 'String', ['前方检测状态: ', num2str(FrontDetected), ', 前方距离: ', num2str(FrontDis)]);
     set(lat_text, 'String', ['侧方检测状态: ', num2str(LatDetected), ', 侧向距离: [', num2str(LatDis(1)), ', ', num2str(LatDis(2)), ']']);
@@ -87,6 +89,22 @@ for t = 1:150
     pause(0.1); % 控制刷新频率
 end
 
+hold off;
+
+
+v_avg=mean(v_r);
+
+% 运行过程结束后绘制速度变化曲线
+figure;
+plot(1:t, v_r(1:t), '-o'); % 使用迭代次数作为x轴，速度v_r作为y轴
+hold on;
+
+% 绘制平均速度的水平线
+yline(v_avg, '--', 'Average Speed', 'LabelHorizontalAlignment', 'left');
+xlabel('Iteration');
+ylabel('Speed');
+title('Speed Variation Over Time with Average Speed');
+grid on;
 hold off;
 
 

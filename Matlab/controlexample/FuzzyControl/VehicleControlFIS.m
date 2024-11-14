@@ -54,8 +54,7 @@ ruleList = [
     1 1 1 0 1 1 1;   % 若 FrontDis 是 Close 且 LatDisLeft 是 Close, LatDisRight 是 Close，保持车道，速度 Slow
 ];
 
-% 示例：如果没有其他规则匹配，则保持当前车道和速度
-ruleList = [ruleList; 0 0 0 0 2 1 1];
+
 % 将规则添加到模糊推理系统
 fis = addRule(fis, ruleList);
 
@@ -64,3 +63,30 @@ showrule(fis);
 
 % 保存模糊控制器为 FIS 文件
 writeFIS(fis, 'VehicleControlFIS');
+
+% 定义输入变量的范围
+frontDisRange = linspace(0, 100, 20);
+latDisLeftRange = linspace(0, 100, 20);
+latDisRightRange = linspace(0, 100, 20);
+
+% 生成网格
+[FrontDisGrid, LatDisLeftGrid, LatDisRightGrid] = meshgrid(frontDisRange, latDisLeftRange, latDisRightRange);
+
+% 评估模糊推理系统
+MySpeedGrid = zeros(size(FrontDisGrid));
+for i = 1:size(FrontDisGrid, 3)
+    for j = 1:size(FrontDisGrid, 2)
+        for k = 1:size(FrontDisGrid, 1)
+            inputs = [FrontDisGrid(k, j, i), LatDisLeftGrid(k, j, i), LatDisRightGrid(k, j, i)];
+            MySpeedGrid(k, j, i) = evalfis(fis, inputs);
+        end
+    end
+end
+
+% 生成图像
+figure;
+surf(FrontDisGrid, LatDisLeftGrid, MySpeedGrid);
+xlabel('FrontDis');
+ylabel('LatDisLeft');
+zlabel('MySpeed');
+title('3D Surface Plot of MySpeed Output');

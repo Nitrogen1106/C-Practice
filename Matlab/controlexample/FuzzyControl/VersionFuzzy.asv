@@ -1,11 +1,10 @@
 %------------------------------绘图-----------------------------------
 % 初始化地图和车辆属性
 
-fis = readfis('VehicleControlFIS_ori');
+fis = readfis('VehicleControlFIS_1');
 
-car_length=4;
-car_width=2;
-
+car_long=4;
+car_width=
 figure;
 RoadLength = 200;
 
@@ -35,14 +34,14 @@ CarSpeed = zeros(1, CarNum); % 初始化速度数组
 
 for i = 1:CarNum
     % 随机生成车辆x坐标，并分配到随机车道中心
-    CarPos(i).x = randi([20,RoadLength]);
+    CarPos(i).x = randi([0,RoadLength]);
     CarPos(i).y = lane_centers(randi([1, 4])); % 随机分配到车道中心位置
 
     % 随机生成车辆速度
     CarSpeed(i) = randi([1, 2]);
 
     % 初始化车辆模型
-    Car(i) = rectangle('Position', [CarPos(i).x-2, CarPos(i).y-1, car_length, car_width], ...
+    Car(i) = rectangle('Position', [CarPos(i).x-2, CarPos(i).y-1, 4, 2], ...
         'FaceColor', 'r');
 end
 
@@ -59,16 +58,16 @@ TrackDis = 30;
 
 % 当前位置
 MyPos = [0, 25];
-AUV = rectangle('Position', [MyPos(1)-2, MyPos(2)-1, car_length, car_width], 'FaceColor', 'g');
+AUV = rectangle('Position', [MyPos(1)-2, MyPos(2)-1, 4, 2], 'FaceColor', 'g');
 
 %----------------------运行过程----------------------------------------
 % 动态更新车辆位置，模拟运动
-for t = 1:100
+for t = 1:300
 
     % 更新车辆位置
     for i = 1:CarNum
         CarPos(i).x = CarPos(i).x + CarSpeed(i); 
-        Car(i).Position = [CarPos(i).x-2, CarPos(i).y-1, car_length, car_width];
+        Car(i).Position = [CarPos(i).x-2, CarPos(i).y-1, 4, 2];
     end
     
     % 检测前方车辆（在探测距离内）
@@ -98,35 +97,19 @@ for t = 1:100
     end
     MyPos(1) = MyPos(1) + MySpeed;
     % 更新 AUV 位置
-    AUV.Position = [MyPos(1)-2, MyPos(2)-1, car_length, car_width];
+    AUV.Position = [MyPos(1)-2, MyPos(2)-1, 4, 2];
     
     set(front_text, 'String', ['前方检测状态: ', num2str(FrontDetected), ', 前方距离: ', num2str(FrontDis)]);
     set(lat_text, 'String', ['侧方检测状态: ', num2str(LatDetected), ', 侧向距离: [', num2str(LatDis(1)), ', ', num2str(LatDis(2)), ']']);
     set(speed_text, 'String', ['当前速度: ', num2str(MySpeed)]);
 
     v_r(t)=MySpeed;
-    
 
     % 刷新图像
     drawnow;
     pause(0.1); % 控制刷新频率
 end
 
-hold off;
-
-v_avg=mean(v_r);
-
-% 运行过程结束后绘制速度变化曲线
-figure;
-plot(1:t, v_r(1:t), '-o'); % 使用迭代次数作为x轴，速度v_r作为y轴
-hold on;
-
-% 绘制平均速度的水平线
-yline(v_avg, '--', 'Average Speed', 'LabelHorizontalAlignment', 'left');
-xlabel('Iteration');
-ylabel('Speed');
-title('Speed Variation Over Time with Average Speed');
-grid on;
 hold off;
 
 

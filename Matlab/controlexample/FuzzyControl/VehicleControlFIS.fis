@@ -15,25 +15,25 @@ DefuzzMethod='centroid'
 Name='FrontDis'
 Range=[0 100]
 NumMFs=3
-MF1='Close':'gauss2mf',[0.55 -21.1778213130133 5.8 15.6]
-MF2='Moderate':'gauss2mf',[4.01 37.7998941798942 4.54 70.3998941798942]
-MF3='Far':'gauss2mf',[8.71 100 0.0849 100]
+MF1='Close':'trapmf',[0 0 10 20]
+MF2='Moderate':'trapmf',[15 30 40 55]
+MF3='Far':'trapmf',[50 70 100 100]
 
 [Input2]
 Name='LatDisLeft'
 Range=[0 100]
 NumMFs=3
-MF1='Close':'gauss2mf',[0.55 -21.18 5.8 15.6]
-MF2='Moderate':'gauss2mf',[4.01 37.8 4.54 70.4]
-MF3='Far':'gauss2mf',[8.71 100 0.0849 100]
+MF1='Close':'trapmf',[0 0 10 20]
+MF2='Moderate':'trapmf',[15 30 40 55]
+MF3='Far':'trapmf',[50 70 100 100]
 
 [Input3]
 Name='LatDisRight'
 Range=[0 100]
 NumMFs=3
-MF1='Close':'gauss2mf',[0.55 -21.18 5.8 15.6]
-MF2='Moderate':'gauss2mf',[4.01 37.8 4.54 70.4]
-MF3='Far':'gauss2mf',[8.71 100 0.0849 100]
+MF1='Close':'trapmf',[0 0 10 20]
+MF2='Moderate':'trapmf',[15 30 40 55]
+MF3='Far':'trapmf',[50 70 100 100]
 
 [Output1]
 Name='LaneChange'
@@ -47,9 +47,9 @@ MF3='Right':'trimf',[0.5 1 1]
 Name='MySpeed'
 Range=[0.5 3]
 NumMFs=3
-MF1='Slow':'gauss2mf',[0.0121 -0.375 0.17 1.01743288876496]
-MF2='Moderate':'gauss2mf',[0.151132346371228 1.58134920634921 0.17 1.8]
-MF3='Fast':'gauss2mf',[0.142 2.93857142857143 0.0186 3.72857142857143]
+MF1='Slow':'trimf',[0.5 1 1.5]
+MF2='Moderate':'trimf',[1.5 2 2.5]
+MF3='Fast':'trimf',[2.5 3 3]
 
 [Rules]
 3 0 0, 0 3 (1) : 1
